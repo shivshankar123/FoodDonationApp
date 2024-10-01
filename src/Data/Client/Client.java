@@ -44,7 +44,10 @@ public class Client {
                     String donorAddress = scanner.nextLine();
                     System.out.println("Enter Phone Number:");
                     String donorPhoneNumber = scanner.nextLine();
-                    donorService.registerDonor(new Donor(donorId, donorFirstName, donorLastName, donorAddress, donorPhoneNumber));
+                    System.out.println("Enter Password:");
+                    String donorPassword = scanner.nextLine();
+                    donorService.registerDonor(new Donor(donorId, donorFirstName, donorLastName, donorAddress, donorPhoneNumber, donorPassword));
+                    loginUtils.registerUser(new User(donorId, donorFirstName, donorLastName, donorPassword, "donor"));
                     break;
 
                 case 2:
@@ -55,14 +58,25 @@ public class Client {
                     System.out.println("Enter Contact Info:");
                     String recipientContactInfo = scanner.nextLine();
                     recipientService.registerRecipient(new Recipient(recipientId, recipientName, recipientContactInfo));
+                    loginUtils.registerUser(new User(recipientId, recipientName, "", null, "recipient"));
                     break;
 
                 case 3:
                     System.out.println("Enter First Name:");
                     String firstName = scanner.nextLine();
-                    System.out.println("Enter Password:");
-                    String password = scanner.nextLine();
+                    System.out.println("Are you a donor or recipient?");
+                    String role = scanner.nextLine().toLowerCase();  // Get user role
+
+                    String password = null;
+                    if (role.equals("donor")) {
+                        // Ask for a password if the user is a donor
+                        System.out.println("Enter Password:");
+                        password = scanner.nextLine();
+                    }
+
+                    // Call the login method with the first name and password (password can be null for recipients)
                     User user = loginUtils.login(firstName, password);
+
                     if (user != null) {
                         System.out.println("Login successful! Role: " + user.getRole());
                         if (user.getRole().equals("donor")) {
